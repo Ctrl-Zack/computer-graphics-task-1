@@ -10,7 +10,7 @@
     --accent: #69d8c5;
     --accent-warm: #f0bd69;
 
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
 }
@@ -180,9 +180,13 @@ canvas {
     height: auto;
 }
 
-canvas:focus-visible {
+.canvas-wrap:focus-within {
     outline: 2px solid var(--accent);
     outline-offset: 4px;
+}
+
+canvas:focus-visible {
+    outline: none;
 }
 
 .reference-frame {
