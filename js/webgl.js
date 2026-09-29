@@ -106,8 +106,12 @@ export function initWebGL(canvas) {
         lightIntensity: gl.getUniformLocation(program, "u_lightIntensity"),
         time: gl.getUniformLocation(program, "u_time")
     };
+    // Deactivates depth comparisons and updates to the depth buffer.
     gl.disable(gl.DEPTH_TEST);
+    // Activates blending of the computed fragment color values.
     gl.enable(gl.BLEND);
+    // Multiplies all colors by the source alpha value.
+    // Multiplies all colors by 1 minus the destination alpha value.
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     return { gl, program, uniforms };
 }
@@ -117,11 +121,24 @@ export function createMesh(renderer, vertices, mode = renderer.gl.TRIANGLES) {
     // Vertex buffer dibuat sekali. VAO menyimpan cara membaca pasangan x,y.
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
+    // Create buffer and upload data
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    // Get location attribute of the shader
     const position = gl.getAttribLocation(program, "a_position");
     gl.enableVertexAttribArray(position);
+    /*
+    binds the buffer currently bound to gl.ARRAY_BUFFER to a
+    generic vertex attribute of the current vertex buffer object
+    and specifies its layout.
+    1: location attribute in the shader
+    2: 2 components (x,y)
+    3: data type in buffer
+    4: no need to normalize
+    5: stride (distance between vertices)
+    6: offset (starting from which byte)
+    */
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
     return { vao, buffer, count: vertices.length / 2, mode };
 }
