@@ -23,23 +23,20 @@ export function createBubbleData() {
     ], speed: 1, sway: 0.009 };
 }
 
-export function updateBubbles(bubbles, deltaTime) {
-    for (const bubble of bubbles.items) {
-        bubble.y += bubble.speed * bubbles.speed * deltaTime;
-        // Reset di luar layar; pertahankan sisa jarak untuk hasil berbasis waktu.
-        if (bubble.y > 1.08) bubble.y = -1.08 + (bubble.y + 1.08) % 2.16;
-    }
-}
-
 export function drawBubbles(renderer, bubbles, time, layer, aspect) {
     const { meshes } = renderer;
     for (const bubble of bubbles.items) {
         if (bubble.layer !== layer) continue;
+        
+        // Calculate y procedurally based on time, speed, and initial position
+        const currentY = bubble.y + time * bubble.speed * bubbles.speed;
+        const proceduralY = ((currentY + 1.08) % 2.16) - 1.08;
+
         const x = bubble.x + (Math.sin(time * 0.8 + bubble.phase) - Math.sin(bubble.phase)) * bubbles.sway;
         const diameter = bubble.radius * 2;
-        const opacity = Math.min(1, (1.08 - Math.abs(bubble.y)) / 0.12) * 0.72;
+        const opacity = Math.min(1, (1.08 - Math.abs(proceduralY)) / 0.12) * 0.72;
         // Koreksi aspect: diameter X dalam pixel sama dengan diameter Y.
-        const matrix = transform(IDENTITY, x, bubble.y, diameter, diameter * aspect);
+        const matrix = transform(IDENTITY, x, proceduralY, diameter, diameter * aspect);
         drawPolygon(renderer, meshes.ring,matrix,"#e4dde6",Math.max(0,opacity));
     }
     if (layer === "back") {

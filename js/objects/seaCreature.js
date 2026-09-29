@@ -17,14 +17,12 @@ export function createCreatureMeshes(renderer) {
     return meshes;
 }
 
-export function updateSeaCreature(creature, time) {
+export function drawSeaCreature(renderer, creature, time) {
     const offsetY = creature.animated
         ? Math.sin(time * creature.speed + creature.phase) * creature.amplitude
         : 0;
-    return { x: creature.x, y: creature.y + offsetY, rotation: creature.rotation };
-}
+    const pose = { x: creature.x, y: creature.y + offsetY, rotation: creature.rotation };
 
-export function drawSeaCreature(renderer, creature, pose) {
     // Blur effect: draw multiple faint radial copies
     const passes = 6;
     for (let i = 0; i < passes; i++) {

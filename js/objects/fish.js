@@ -27,15 +27,13 @@ export function createFishMeshes(renderer) {
     return meshes;
 }
 
-export function updateFish(fish, time) {
-    return {
+export function drawFish(renderer, fish, time, showPivots = false) {
+    const pose = {
         x: fish.x + fish.direction * Math.sin(time * fish.speed) * fish.amplitude,
         y: fish.y + (Math.sin(time * fish.verticalSpeed + fish.phase) - Math.sin(fish.phase)) * fish.verticalAmplitude,
         tailAngle: Math.sin(time * fish.tailSpeed) * radians(fish.tailAmplitude) * fish.tailDirection
     };
-}
 
-export function drawFish(renderer, fish, pose, showPivots = false) {
     const { meshes } = renderer;
     const root = transform(IDENTITY, pose.x, pose.y, fish.scaleX * fish.direction, fish.scaleY, fish.rotation);
     // Pivot (0,0) triangle ekor berada di sambungan badan, bukan pusat ekor.

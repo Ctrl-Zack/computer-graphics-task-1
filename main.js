@@ -2,9 +2,9 @@ import { initWebGL } from './js/webgl.js';
 import { createPrimitives } from './js/primitives.js';
 import { setupControls, updateControls, clearKeys, resetFishTransform } from './js/controls.js';
 import { createLightData, drawOcean } from './js/objects/ocean.js';
-import { createFishData, createFishMeshes, updateFish, drawFish } from './js/objects/fish.js';
-import { createBubbleData, updateBubbles, drawBubbles } from './js/objects/bubbles.js';
-import { createCreatureData, createCreatureMeshes, updateSeaCreature, drawSeaCreature } from './js/objects/seaCreature.js';
+import { createFishData, createFishMeshes, drawFish } from './js/objects/fish.js';
+import { createBubbleData, drawBubbles } from './js/objects/bubbles.js';
+import { createCreatureData, createCreatureMeshes, drawSeaCreature } from './js/objects/seaCreature.js';
 import { createPlantData, drawSeaPlant } from './js/objects/plants.js';
 import { createCoralData, drawSmallCoral } from './js/objects/corals.js';
 import { createSeabedData, createSeabedMeshes, drawSeabed, drawRock, drawStones } from './js/objects/seabed.js';
@@ -19,9 +19,11 @@ export const scene = {
     creatures: createCreatureData(), plants: createPlantData(), corals: createCoralData(),
     seabed: createSeabedData(), shells: createShellData()
 };
+
 const initialScene = structuredClone(scene);
 export const state = { time: 0, speed: 1, paused: motionPreference.matches, showPivots: false };
-let renderer, fishPoses, creaturePoses;
+
+let renderer;
 let previousTimestamp = null;
 let animationFrame = null;
 let contextLost = false;
@@ -32,10 +34,7 @@ export function update(deltaTime) {
     if (!state.paused) {
         const elapsed = deltaTime * state.speed;
         state.time += elapsed;
-        updateBubbles(scene.bubbles, elapsed);
     }
-    fishPoses = scene.fish.map(fish => updateFish(fish, state.time));
-    creaturePoses = scene.creatures.map(creature => updateSeaCreature(creature, state.time));
 }
 
 export function draw() {
@@ -48,10 +47,10 @@ export function draw() {
     drawBubbles(renderer, scene.bubbles, state.time, 'back', aspect);
     scene.plants.forEach(plant => drawSeaPlant(renderer, plant, state.time));
     scene.corals.forEach(coral => drawSmallCoral(renderer, coral, state.time));
-    scene.fish.forEach((fish, i) => drawFish(renderer, fish, fishPoses[i], state.showPivots));
+    scene.fish.forEach((fish, i) => drawFish(renderer, fish, state.time, state.showPivots));
     drawSeabed(renderer, scene.seabed);
     scene.creatures.forEach((creature, i) => {
-        if (creature.layer === 'back') drawSeaCreature(renderer, creature, creaturePoses[i]);
+        if (creature.layer === 'back') drawSeaCreature(renderer, creature, state.time);
     });
     drawRock(renderer, scene.seabed);
     scene.shells.forEach(shell => drawShell(renderer, shell, state.time));

@@ -23,7 +23,7 @@ export const Mat3 = {
                 }
             }
         }
-        return result;
+        return result; 
     }
 };
 
