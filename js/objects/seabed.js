@@ -3,7 +3,7 @@ import { createPolygon, drawPolygon, drawEllipse } from '../primitives.js';
 import { createMesh } from '../webgl.js';
 
 export function createSeabedData() {
-    // Batu dan dasar laut menggunakan ruang lokal kelompok yang sama, origin (0,0).
+    // Rocks and seabed use the same local group space, origin (0,0).
     return { x:0, y:0, scaleX:1, scaleY:1, rotation:0,
         color:'#0c142b', rock:'#080f23', rockFacet:'#111d37' };
 }
@@ -12,7 +12,7 @@ function createSeabed(renderer) {
     const top = [[-1,-0.85],[-0.65,-0.82],[-0.36,-0.95],[-0.10,-0.83],
         [0.10,-0.87],[0.24,-0.81],[0.42,-0.79],[0.60,-0.815],[0.78,-0.76],[1,-0.70]];
     const vertices = [];
-    // Setiap dua titik permukaan membentuk trapezoid hingga dasar y=-1.
+    // Every two surface points form a trapezoid down to base y=-1.
     for (let i = 0; i < top.length - 1; i++) {
         const a = top[i], b = top[i+1];
         vertices.push(a[0],-1, ...b, ...a, a[0],-1, b[0],-1, ...b);
@@ -20,6 +20,7 @@ function createSeabed(renderer) {
     return createMesh(renderer, vertices);
 }
 
+// Generating data for seabed object.
 export function createSeabedMeshes(renderer) {
     const meshes = {};
     meshes.seabed = createSeabed(renderer);

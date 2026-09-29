@@ -1,3 +1,4 @@
+// Function to compile a WebGL shader.
 export function compileShader(gl, type, source) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -10,9 +11,11 @@ export function compileShader(gl, type, source) {
     return shader;
 }
 
+// Function to initialize WebGL, compile shader programs, and get uniform locations.
 export function initWebGL(canvas) {
+    // Requesting the WebGL2 rendering context from a canvas element.
     const gl = canvas.getContext("webgl2", { alpha: false, antialias: true });
-    if (!gl) throw new Error("WebGL2 tidak tersedia. Coba Chrome, Edge, atau Firefox dengan akselerasi grafis aktif.");
+    if (!gl) throw new Error("WebGL2 not available. Try Chrome, Edge, or Firefox with hardware acceleration enabled.");
     const vertex = compileShader(gl, gl.VERTEX_SHADER, `#version 300 es
         in vec2 a_position;
         uniform mat3 u_matrix;
@@ -35,14 +38,14 @@ export function initWebGL(canvas) {
         out vec4 outColor;
 
         float lightBeam(vec2 point, float slope, float width) {
-            // Berkas turun ke kiri, melebar dan memudar semakin jauh dari sumber.
+            // Beam goes down to the left, widening and fading further from the source.
             float depth = max(u_lightSource.y - point.y, 0.0);
             float centerX = u_lightSource.x - depth * slope;
             float halfWidth = width + depth * 0.055;
             float edge = 1.0 - smoothstep(halfWidth * 0.15, halfWidth,
                 abs(point.x - centerX));
             float fade = 1.0 - smoothstep(0.15, 2.65, depth);
-            // Tambahan animasi shimmer (pendar) yang bergerak seiring waktu
+            // Additional shimmer animation that moves over time
             float shimmer = 0.85 + 0.25 * sin(point.y * 12.0 - u_time * 2.5 + point.x * 5.0);
             return edge * fade * shimmer;
         }
@@ -54,7 +57,7 @@ export function initWebGL(canvas) {
         void main() {
             outColor = u_color;
             if (u_ocean) {
-                // Hanya campuran warna 2D: cahaya datang dari kanan atas.
+                // Only 2D color mix: light comes from top right.
                 float light = clamp(0.48 + 0.35*v_world.x + 0.30*v_world.y, 0.0, 1.0);
                 vec3 deep = vec3(0.045, 0.12, 0.245);
                 vec3 middle = vec3(0.21, 0.365, 0.48);
@@ -63,7 +66,7 @@ export function initWebGL(canvas) {
                 water = mix(water, shallow, smoothstep(0.50, 1.15, light));
                 float glow = 1.0 - smoothstep(0.0, 1.35, distance(v_world, u_lightSource));
                 
-                // Efek pendulum individu untuk masing-masing beam
+                // Individual pendulum effect for each beam
                 float swing1 = sin(u_time * 0.8 + 0.0) * 0.12;
                 float swing2 = sin(u_time * 0.6 + 2.0) * 0.15;
                 float swing3 = sin(u_time * 0.7 + 4.0) * 0.10;
@@ -97,6 +100,7 @@ export function initWebGL(canvas) {
         throw new Error(message);
     }
     gl.useProgram(program);
+    // Storing a reference to a uniform variable in a shader
     const uniforms = {
         matrix: gl.getUniformLocation(program, "u_matrix"),
         color: gl.getUniformLocation(program, "u_color"),
@@ -116,9 +120,10 @@ export function initWebGL(canvas) {
     return { gl, program, uniforms };
 }
 
+// Function to create a mesh (VAO and Buffer) from vertex data
 export function createMesh(renderer, vertices, mode = renderer.gl.TRIANGLES) {
     const { gl, program } = renderer;
-    // Vertex buffer dibuat sekali. VAO menyimpan cara membaca pasangan x,y.
+    // Vertex buffer created once. VAO stores how to read x,y pairs.
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
     // Create buffer and upload data

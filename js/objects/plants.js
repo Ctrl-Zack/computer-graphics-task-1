@@ -1,6 +1,7 @@
 import { IDENTITY, transform } from '../../matrix3.js';
 import { drawPolygon, drawEllipse, drawLine } from '../primitives.js';
 
+// Generating data for plants objects.
 export function createPlantData() {
     return [
         { x: -0.81, y: -0.62, scaleX: 0.42, scaleY: 0.71, rotation: 0.08, color: "#a34f64", highlight: "#ce7180" },
@@ -24,19 +25,19 @@ const BRANCHES = [
 
 export function drawSeaPlant(renderer, plant, time = 0, branches = BRANCHES) {
     const { meshes } = renderer;
-    // Add sway based on time and plant's position to offset the animation
+    // Adding swaying motion based on time and plant position for animation.
     const sway = Math.sin(time * 2 + plant.x * 10) * 0.05;
     const root = transform(IDENTITY, plant.x, plant.y, plant.scaleX, plant.scaleY, plant.rotation + sway);
     
     for (let i = 0; i < STEM.length - 1; i++) {
         const width = 0.045 - i * 0.005;
-        // Optionally, make the stem bend progressively, but for simplicity we sway the root.
+        // You can optionally create a stem with a gradual curve, but for simplicity, we will let the roots swing.
         drawLine(renderer, root, STEM[i], STEM[i+1], width, plant.color);
         drawEllipse(renderer, root, ...STEM[i], width, width, plant.color);
     }
     
     for (const branch of branches) {
-        // Rotasi daun lokal diwariskan ke root tanaman bersama scaling-nya.
+        // Local leaf rotation is inherited to the plant root along with its scaling.
         const [x,y] = STEM[branch.at];
         const leafSway = Math.cos(time * 3 + branch.at + plant.x * 10) * 0.1;
         const leaf = transform(root, x, y, branch.width, branch.length, branch.angle + leafSway);

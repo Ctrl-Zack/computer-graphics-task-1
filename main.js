@@ -10,17 +10,23 @@ import { createCoralData, drawSmallCoral } from './js/objects/corals.js';
 import { createSeabedData, createSeabedMeshes, drawSeabed, drawRock, drawStones } from './js/objects/seabed.js';
 import { createShellData, drawShell } from './js/objects/shells.js';
 
+// Mengambil elemen kanvas dan menghitung rasio aspeknya
 const canvas = document.getElementById('canvas');
 const aspect = canvas.width / canvas.height;
+// Memeriksa preferensi pengguna untuk mengurangi motion
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 const keys = Object.create(null);
+
+// Inisialisasi data untuk setiap objek di dalam scene
 export const scene = {
     light: createLightData(), fish: createFishData(), bubbles: createBubbleData(),
     creatures: createCreatureData(), plants: createPlantData(), corals: createCoralData(),
     seabed: createSeabedData(), shells: createShellData()
 };
 
+// Menyalin status awal scene untuk fungsi reset
 const initialScene = structuredClone(scene);
+// Menyimpan state global aplikasi
 export const state = { time: 0, speed: 1, paused: motionPreference.matches, showPivots: false };
 
 let renderer;
@@ -28,8 +34,9 @@ let previousTimestamp = null;
 let animationFrame = null;
 let contextLost = false;
 
+// Function to update scene logic and state based on time
 export function update(deltaTime) {
-    // Input memakai detik nyata, tidak dipengaruhi pause/speed animasi otomatis.
+    // Input uses real-world seconds, unaffected by automatic animation pause/speed.
     updateControls(scene.fish[0], keys, deltaTime);
     if (!state.paused) {
         const elapsed = deltaTime * state.speed;
@@ -37,12 +44,13 @@ export function update(deltaTime) {
     }
 }
 
+// Function to draw all objects on the canvas
 export function draw() {
     const { gl } = renderer;
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0.06, 0.11, 0.2, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    // Painter's algorithm: urutan asli dipertahankan, tanpa depth buffer.
+    // Painter's algorithm: original order is preserved, without depth buffer.
     drawOcean(renderer, scene.light, state.time);
     drawBubbles(renderer, scene.bubbles, state.time, 'back', aspect);
     scene.plants.forEach(plant => drawSeaPlant(renderer, plant, state.time));
@@ -58,6 +66,7 @@ export function draw() {
     drawBubbles(renderer, scene.bubbles, state.time, 'front', aspect);
 }
 
+// Main loop for continuous animation and rendering
 function render(timestamp) {
     if (contextLost) return;
     const deltaTime = previousTimestamp === null ? 0
@@ -68,6 +77,7 @@ function render(timestamp) {
     animationFrame = requestAnimationFrame(render);
 }
 
+// Function to reset the entire scene to its initial state
 export function resetScene(paused = motionPreference.matches) {
     clearKeys(keys);
     Object.assign(scene, structuredClone(initialScene));
@@ -81,7 +91,8 @@ function setPaused(paused) {
     previousTimestamp = null;
 }
 
-// Pesan hanya muncul jika canvas tidak dapat dirender.
+// The message only appears if the canvas cannot be rendered.
+// Menampilkan pesan error di UI jika grafis gagal dirender
 function showError(message) {
     let error = document.getElementById('graphics-error');
     if (!message) { error?.remove(); return; }
@@ -94,9 +105,10 @@ function showError(message) {
     error.textContent = message;
 }
 
+// Initial WebGL initialization and mesh creation
 function init() {
     renderer = initWebGL(canvas);
-    // Geometry/buffer dibuat sekali, lalu digunakan ulang pada setiap draw.
+    // Geometry/buffer is created once, then reused on every draw.
     renderer.meshes = {
         ...createPrimitives(renderer), ...createFishMeshes(renderer),
         ...createCreatureMeshes(renderer), ...createSeabedMeshes(renderer)
@@ -108,6 +120,7 @@ function init() {
     render(performance.now());
 }
 
+// Menyiapkan kontrol interaktif (tombol/UI)
 setupControls(canvas, keys, {
     isAvailable: () => !contextLost,
     pause: () => setPaused(!state.paused),
@@ -121,6 +134,7 @@ setupControls(canvas, keys, {
 motionPreference.addEventListener('change', event => {
     if (event.matches) setPaused(true);
 });
+// Menangani kasus saat konteks WebGL terputus
 canvas.addEventListener('webglcontextlost', event => {
     event.preventDefault();
     clearKeys(keys);
@@ -128,10 +142,12 @@ canvas.addEventListener('webglcontextlost', event => {
     cancelAnimationFrame(animationFrame);
     showError('Koneksi grafis terputus. Menunggu WebGL2 pulih…');
 });
+// Memulihkan WebGL jika koneksi kembali
 canvas.addEventListener('webglcontextrestored', () => {
     try { init(); }
     catch (error) { contextLost = true; showError(error.message); }
 });
 
+// Memulai aplikasi
 try { init(); }
 catch (error) { contextLost = true; console.error(error); showError(error.message); }

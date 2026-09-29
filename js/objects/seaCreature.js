@@ -1,7 +1,7 @@
 import { IDENTITY, transform } from '../../matrix3.js';
 import { createPolygon, drawPolygon, drawEllipse } from '../primitives.js';
-// Satu hantu kiri. x/y = posisi dasar; amplitude = tinggi ayunan; speed = radian/detik.
-// scale mengubah ukuran; phase menggeser timing. amplitude: 0 atau animated: false untuk diam.
+// One left ghost. x/y = base position; amplitude = swing height; speed = radians/second.
+// scale changes size; phase shifts timing. amplitude: 0 or animated: false to stand still.
 export function createCreatureData() {
     return [
         { x: -0.365, y: -0.71, scale: 0.27, rotation: -0.16,
@@ -9,6 +9,7 @@ export function createCreatureData() {
     ];
 }
 
+// Generating data for sea creature object.
 export function createCreatureMeshes(renderer) {
     const meshes = {};
     meshes.creatureBody = createPolygon(renderer, [[-0.50,-0.12],[-0.48,0.20],[-0.37,0.48],
@@ -52,12 +53,12 @@ function drawCreaturePass(renderer, pose, scale, opacity) {
 
 function drawSurprisedFace(renderer, creatureMatrix, opacity) {
     const { meshes } = renderer;
-    // Mata kecil langsung pada badan; posisi dan ukuran tetap dalam ruang lokal.
+    // Small eyes directly on the body; position and size are fixed in local space.
     const eyeColor = "#00060a";
     drawEllipse(renderer, creatureMatrix,-0.14,0.165,0.070,0.110,eyeColor,-0.10,opacity);
     drawEllipse(renderer, creatureMatrix,0.14,0.180,0.066,0.103,eyeColor,0.08,opacity);
 
-    // Ring oval kecil: ekspresi "o" tanpa bidang gelap menyerupai lubang.
+    // Small oval ring: "o" expression without a dark area resembling a hole.
     const mouth = transform(creatureMatrix,0.005,-0.025,0.052,0.073,-0.06);
     drawPolygon(renderer, meshes.ring,mouth,"#17232e",opacity);
 }

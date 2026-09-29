@@ -1,6 +1,7 @@
 import { IDENTITY, transform } from '../../matrix3.js';
 import { drawPolygon } from '../primitives.js';
 
+// Generating data for seashell objects.
 export function createShellData() {
     return [
         { x: -0.77, y: -0.47, scale: 0.078, rotation: 0.12 },
@@ -17,7 +18,7 @@ export function drawShell(renderer, shell, time = 0, color = "#e3c1c9") {
     const { meshes } = renderer;
     const root = transform(IDENTITY,shell.x,shell.y,shell.scale,shell.scale,shell.rotation);
     
-    // Animate opening and closing using a sine wave. 
+    // Animate opening and closing using a sine wave.
     // Sine wave offset by shell's x coordinate so they don't all open synchronously.
     const openAmount = (Math.sin(time * 2 + shell.x * 10) + 1); // Range 0 to 1
     const baseAngle1 = 0;
@@ -26,6 +27,7 @@ export function drawShell(renderer, shell, time = 0, color = "#e3c1c9") {
     const animAngle1 = baseAngle1 + openAmount * 0.3;
     const animAngle2 = baseAngle2 - openAmount * 0.3;
 
+    // Drawing the two parts of a seashell.
     for (const angle of [animAngle1, animAngle2]) {
         const leaf = transform(root,0,0,1.10,1,angle);
         drawPolygon(renderer, meshes.leaf,leaf,color);

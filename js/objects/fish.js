@@ -1,6 +1,7 @@
 import { IDENTITY, transform, radians } from '../../matrix3.js';
 import { createPolygon, drawPolygon, drawTriangle, drawEllipse } from '../primitives.js';
-// Parameter posisi/skala serta kecepatan otomatis dapat diubah untuk demo.
+// Position/scale and automatic speed parameters can be changed for demo.
+// Function to define initial data of fish objects.
 export function createFishData() {
     return [
         { x: 0.45, y: 0.18, scaleX: 0.17, scaleY: 0.17, rotation: 0, direction: 1,
@@ -12,6 +13,7 @@ export function createFishData() {
     ];
 }
 
+// Function to create meshes (geometric shapes) for fish
 export function createFishMeshes(renderer) {
     const meshes = {};
     meshes.fishBody = createPolygon(renderer, [[-0.52,-0.02],[-0.38,0.17],[-0.25,0.33],[-0.08,0.37],
@@ -27,7 +29,9 @@ export function createFishMeshes(renderer) {
     return meshes;
 }
 
+// Function to draw and animate fish on screen
 export function drawFish(renderer, fish, time, showPivots = false) {
+    // Calculating the dynamic position and rotation of the fish.
     const pose = {
         x: fish.x + fish.direction * Math.sin(time * fish.speed) * fish.amplitude,
         y: fish.y + (Math.sin(time * fish.verticalSpeed + fish.phase) - Math.sin(fish.phase)) * fish.verticalAmplitude,
@@ -36,7 +40,7 @@ export function drawFish(renderer, fish, time, showPivots = false) {
 
     const { meshes } = renderer;
     const root = transform(IDENTITY, pose.x, pose.y, fish.scaleX * fish.direction, fish.scaleY, fish.rotation);
-    // Pivot (0,0) triangle ekor berada di sambungan badan, bukan pusat ekor.
+    // Pivot (0,0) of the tail triangle is at the body joint, not the tail center.
     const tail = transform(root, -0.49, -0.055, 1, 1, pose.tailAngle);
     drawTriangle(renderer, transform(tail,0,0,0.32,0.28),"#713c51");
     drawTriangle(renderer, transform(tail,-0.05,0,0.15,0.14),"#b66563");
@@ -48,6 +52,7 @@ export function drawFish(renderer, fish, time, showPivots = false) {
     for (const stripe of meshes.fishStripes) drawPolygon(renderer, stripe,root,"#34424d");
     drawEllipse(renderer, root,0.305,-0.015,0.040,0.043,"#495149");
     drawEllipse(renderer, root,0.310,-0.009,0.010,0.011,"#fff1b7");
+    // Displays the pivot point if debug mode is enabled.
     if (showPivots) {
         drawEllipse(renderer, root,0,0,0.06,0.06,"#ffffff");
         drawEllipse(renderer, tail,0,0,0.065,0.065,"#ec92a5");

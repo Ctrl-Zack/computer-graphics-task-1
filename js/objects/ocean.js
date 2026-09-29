@@ -1,10 +1,12 @@
 import { IDENTITY, transform } from '../../matrix3.js';
 import { rgba, drawRectangle } from '../primitives.js';
 
+// Generating data for sea light objects.
 export function createLightData() {
     return { enabled: true, source: [1.10, 1.15], intensity: 0.38, color: '#e6dfd5' };
 }
 
+// Drawing an ocean background and applying lighting effects to the shader.
 export function drawOcean(renderer, light, time = 0) {
     const { gl, uniforms } = renderer;
     gl.uniform2fv(uniforms.lightSource, light.source);

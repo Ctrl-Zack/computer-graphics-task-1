@@ -1,6 +1,7 @@
 import { IDENTITY, transform } from '../../matrix3.js';
 import { drawPolygon, drawEllipse } from '../primitives.js';
 
+// Generating data for bubbles objects.
 export function createBubbleData() {
     return { items: [
         { x:-0.56, y:-0.32, radius:0.011, speed:0.055, phase:0, layer:"front" },
@@ -35,12 +36,12 @@ export function drawBubbles(renderer, bubbles, time, layer, aspect) {
         const x = bubble.x + (Math.sin(time * 0.8 + bubble.phase) - Math.sin(bubble.phase)) * bubbles.sway;
         const diameter = bubble.radius * 2;
         const opacity = Math.min(1, (1.08 - Math.abs(proceduralY)) / 0.12) * 0.72;
-        // Koreksi aspect: diameter X dalam pixel sama dengan diameter Y.
+        // Aspect correction: X diameter in pixels equals Y diameter.
         const matrix = transform(IDENTITY, x, proceduralY, diameter, diameter * aspect);
         drawPolygon(renderer, meshes.ring,matrix,"#e4dde6",Math.max(0,opacity));
     }
     if (layer === "back") {
-        // Bintik kecil tetap: detail air pada referensi, bukan particle engine.
+        // Fixed small specks: water details in reference, not particle engine.
         const specks = [[-0.33,0.60],[-0.11,0.71],[0.12,0.49],[0.59,0.63],[-0.42,0.24],
             [-0.31,0.11],[-0.065,-0.08],[0.71,-0.11],[0.37,-0.035],[0.66,0.96],[0.80,0.91],[0.46,0.98]];
         for (const [x,y] of specks) drawEllipse(renderer, IDENTITY,x,y,0.004,0.011,"#cad0dc",-0.2,0.65);

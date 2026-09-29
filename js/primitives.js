@@ -1,6 +1,7 @@
 import { transform } from '../matrix3.js';
 import { createMesh } from './webgl.js';
 
+// Avoid repeated hex parsing.
 const colorCache = new Map();
 export function rgba(hex, alpha = 1) {
     if (!colorCache.has(hex)) {
@@ -9,13 +10,15 @@ export function rgba(hex, alpha = 1) {
     return [...colorCache.get(hex), alpha];
 }
 
+// Function to create a mesh from a convex polygon (converting it to triangles)
 export function createPolygon(renderer, points) {
-    //polygon convex -> triangle
+    // convex polygon -> triangle
     const triangles = [];
     for (let i = 1; i < points.length - 1; i++) triangles.push(...points[0], ...points[i], ...points[i + 1]);
     return createMesh(renderer, triangles);
 }
 
+// Function to create a circle or ring mesh
 export function createCircle(renderer, segments = 48, ring = false) {
     const { gl } = renderer;
     const vertices = ring ? [] : [0, 0];
@@ -28,8 +31,9 @@ export function createCircle(renderer, segments = 48, ring = false) {
     return createMesh(renderer, vertices, ring ? gl.TRIANGLE_STRIP : gl.TRIANGLE_FAN);
 }
 
+// Function to create a collection of standard primitives
 export function createPrimitives(renderer) {
-    // leaf dgn elips vertikal
+    // leaf with vertical ellipse
     const leaf = [];
     for (let i = 0; i <= 16; i++) {
         const angle = i * Math.PI * 2 / 16;
@@ -44,6 +48,7 @@ export function createPrimitives(renderer) {
     };
 }
 
+// Function to draw a polygon to the screen
 export function drawPolygon(renderer, mesh, matrix, color, alpha = 1) {
     const { gl, uniforms } = renderer;
     // activate mesh, send transform & color -> draw
