@@ -10,8 +10,7 @@ export function rgba(hex, alpha = 1) {
 }
 
 export function createPolygon(renderer, points) {
-    // Fan dari vertex pertama: gunakan HANYA polygon convex.
-    // Bentuk cekung dipecah menjadi polygon kecil (lihat createSeabed).
+    //polygon convex -> triangle
     const triangles = [];
     for (let i = 1; i < points.length - 1; i++) triangles.push(...points[0], ...points[i], ...points[i + 1]);
     return createMesh(renderer, triangles);
@@ -30,7 +29,7 @@ export function createCircle(renderer, segments = 48, ring = false) {
 }
 
 export function createPrimitives(renderer) {
-    // Daun ramping: pasangan titik kiri-kanan sepanjang sumbu lokal Y.
+    // leaf dgn elips vertikal
     const leaf = [];
     for (let i = 0; i <= 16; i++) {
         const angle = i * Math.PI * 2 / 16;
@@ -47,6 +46,7 @@ export function createPrimitives(renderer) {
 
 export function drawPolygon(renderer, mesh, matrix, color, alpha = 1) {
     const { gl, uniforms } = renderer;
+    // activate mesh, send transform & color -> draw
     gl.bindVertexArray(mesh.vao);
     gl.uniformMatrix3fv(uniforms.matrix, false, matrix);
     gl.uniform4fv(uniforms.color, rgba(color, alpha));
@@ -73,7 +73,6 @@ export function drawEllipse(renderer, parent, x, y, width, height, color, rotati
 }
 
 export function drawLine(renderer, parent, a, b, width, color, alpha = 1) {
-    // Garis tebal = rectangle, agar tidak bergantung dukungan gl.lineWidth.
     const dx = b[0] - a[0], dy = b[1] - a[1];
     drawRectangle(renderer, transform(parent, (a[0]+b[0])/2, (a[1]+b[1])/2,
         Math.hypot(dx,dy), width, Math.atan2(dy,dx)), color, alpha);

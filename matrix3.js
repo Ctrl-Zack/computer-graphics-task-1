@@ -32,6 +32,6 @@ export const radians = degrees => degrees * Math.PI / 180;
 
 export function transform(parent, x = 0, y = 0, sx = 1, sy = 1, rotation = 0) {
     const local = Mat3.multiply(Mat3.translation(x, y),
-        Mat3.multiply(Mat3.rotation(rotation), Mat3.scaling(sx, sy)));
+        Mat3.multiply(Mat3.rotation(rotation), Mat3.scaling(sx, sy))); // T R S 
     return Mat3.multiply(parent, local);
 }
