@@ -3,37 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tugas 1 Grafkom</title>
+    <title>Eksplorasi Bawah Laut · Tugas 1 Grafkom</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="identity">
-        <p>Anggota 1: Isabella Sienna Sulisthio [5025241199]</p>
-        <p>Anggota 2: Muhammad Zaky Zein [5025241148]</p>
-    </div>
-
-    <div class="container">
-        <canvas id="canvas" width="1200" height="1260" tabindex="0"
-            aria-label="Pemandangan bawah laut. Kontrol keyboard menggerakkan ikan besar."
-            aria-describedby="control-guide">
-            Browser Anda tidak mendukung canvas.
-        </canvas>
-        <img src="reference.jpg" alt="reference" width="1200" height="1260">
-    </div>
-
-    <div class="controls-info" id="control-guide">
-        <h3>Kontrol Interaktif</h3>
-        <ul>
-            <li><kbd>Panah</kbd>: Pindah posisi ikan besar</li>
-            <li><kbd>Q</kbd> / <kbd>E</kbd>: Rotasi ikan besar</li>
-            <li><kbd>Z</kbd> / <kbd>X</kbd>: Perkecil/Perbesar ikan besar</li>
-            <li><kbd>Spasi</kbd>: Pause / Play animasi</li>
-            <li><kbd>R</kbd>: Reset ikan besar (Shift+R: Reset semua)</li>
-            <li><kbd>[</kbd> / <kbd>]</kbd>: Kurangi / Tambah kecepatan animasi</li>
-            <li><kbd>P</kbd>: Tampilkan titik pivot (untuk debug)</li>
-        </ul>
-    </div>
-
+    <main class="page-shell">
+        <header class="hero">
+            <h1>Eksplorasi Bawah Laut</h1>
+            <div class="identity" aria-label="Informasi anggota kelompok">
+                <span>Muhammad Zaky Zein <b>5025241148</b></span>
+                <span class="identity-divider">•</span>
+                <span>Isabella Sienna Sulisthio <b>5025241199</b></span>
+                
+            </div>
+        </header>
+        <section class="workspace" aria-label="Area karya dan referensi">
+            <article class="art-card">
+                <div class="card-heading"><div><span class="section-label">Live canvas</span><h2>Hasil WebGL</h2></div></div>
+                <div class="canvas-wrap">
+                    <canvas id="canvas" width="1200" height="1260" tabindex="0" aria-label="Pemandangan bawah laut. Kontrol keyboard menggerakkan ikan besar." aria-describedby="control-guide">Browser Anda tidak mendukung canvas.</canvas>
+                </div>
+            </article>
+            <aside class="reference-card">
+                <div class="card-heading compact"><div><span class="section-label">Visual acuan</span><h2>Referensi Gambar</h2></div></div>
+                <div class="reference-frame"><img src="reference.jpg" alt="Gambar referensi pemandangan bawah laut" width="1200" height="1260"></div>
+                <p class="hint">Perbandingan visual dengan gambar referensi.</p>
+            </aside>
+        </section>
+        <section class="controls-info controls" id="control-guide">
+            <div class="controls-title"><span class="control-icon">⌨</span><div><h2>Keyboard Shortcuts</h2></div></div>
+            <div class="control-grid">
+                <div class="control-item"><kbd>← ↑ ↓ →</kbd><span>Pindahkan ikan besar</span></div>
+                <div class="control-item"><kbd>Q</kbd> <kbd>E</kbd><span>Rotasi ikan besar</span></div>
+                <div class="control-item"><kbd>Z</kbd> <kbd>X</kbd><span>Perkecil / perbesar</span></div>
+                <div class="control-item"><kbd>Spasi</kbd><span>Pause / play animasi</span></div>
+                <div class="control-item"><kbd>Shift+R</kbd><span>Reset ke posisi awal</span></div>
+                <div class="control-item"><kbd>[</kbd> <kbd>]</kbd><span>Atur kecepatan animasi</span></div>
+                <div class="control-item"><kbd>P</kbd><span>Tampilkan titik pivot</span></div>
+            </div>
+        </section>
+    </main>
     <script type="module" src="./main.js"></script>
 </body>
 </html>
