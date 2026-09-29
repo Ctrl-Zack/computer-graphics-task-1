@@ -30,6 +30,7 @@ export function initWebGL(canvas) {
         uniform vec2 u_lightSource;
         uniform vec3 u_lightColor;
         uniform float u_lightIntensity;
+        uniform float u_time;
         in vec2 v_world;
         out vec4 outColor;
 
@@ -41,7 +42,13 @@ export function initWebGL(canvas) {
             float edge = 1.0 - smoothstep(halfWidth * 0.15, halfWidth,
                 abs(point.x - centerX));
             float fade = 1.0 - smoothstep(0.15, 2.65, depth);
-            return edge * fade;
+            // Tambahan animasi shimmer (pendar) yang bergerak seiring waktu
+            float shimmer = 0.85 + 0.25 * sin(point.y * 12.0 - u_time * 2.5 + point.x * 5.0);
+            return edge * fade * shimmer;
+        }
+
+        float random(vec2 st) {
+            return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
         }
 
         void main() {
@@ -55,12 +62,27 @@ export function initWebGL(canvas) {
                 vec3 water = mix(deep, middle, smoothstep(0.0, 0.75, light));
                 water = mix(water, shallow, smoothstep(0.50, 1.15, light));
                 float glow = 1.0 - smoothstep(0.0, 1.35, distance(v_world, u_lightSource));
-                float rays = lightBeam(v_world, 0.48, 0.065) * 0.65
-                           + lightBeam(v_world, 0.83, 0.110) * 0.50
-                           + lightBeam(v_world, 1.18, 0.080) * 0.40;
+                
+                // Efek pendulum individu untuk masing-masing beam
+                float swing1 = sin(u_time * 0.8 + 0.0) * 0.12;
+                float swing2 = sin(u_time * 0.6 + 2.0) * 0.15;
+                float swing3 = sin(u_time * 0.7 + 4.0) * 0.10;
+
+                float rays = lightBeam(v_world, 0.48 + swing1, 0.065 + sin(u_time * 1.2) * 0.01) * 0.65
+                           + lightBeam(v_world, 0.83 + swing2, 0.110 + cos(u_time * 0.8) * 0.02) * 0.50
+                           + lightBeam(v_world, 1.18 + swing3, 0.080 + sin(u_time * 1.5) * 0.015) * 0.40;
                 float illumination = clamp((glow * 0.55 + rays) * u_lightIntensity, 0.0, 1.0);
                 outColor = vec4(mix(water, u_lightColor, illumination), 1.0);
             }
+            
+            // Apply subtle grainy shader effect
+            float grainSize = 4.0; 
+
+            float grain = random(floor(gl_FragCoord.xy / grainSize)) * 0.1;
+
+            // Apply subtle grainy shader effect
+            outColor.rgb -= grain;
+
         }
     `);
     const program = gl.createProgram();
@@ -81,7 +103,8 @@ export function initWebGL(canvas) {
         ocean: gl.getUniformLocation(program, "u_ocean"),
         lightSource: gl.getUniformLocation(program, "u_lightSource"),
         lightColor: gl.getUniformLocation(program, "u_lightColor"),
-        lightIntensity: gl.getUniformLocation(program, "u_lightIntensity")
+        lightIntensity: gl.getUniformLocation(program, "u_lightIntensity"),
+        time: gl.getUniformLocation(program, "u_time")
     };
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);

@@ -8,8 +8,10 @@ export function createCoralData() {
     ];
 }
 
-export function drawSmallCoral(renderer, coral) {
-    const root = transform(IDENTITY, coral.x, coral.y, coral.scaleX, coral.scaleY, coral.rotation);
+export function drawSmallCoral(renderer, coral, time = 0) {
+    // Alternate left and right using sine wave
+    const alternatingRotation = Math.sin(time * 1.5 + coral.x * 10) * 0.15;
+    const root = transform(IDENTITY, coral.x, coral.y, coral.scaleX, coral.scaleY, coral.rotation + alternatingRotation);
     drawLine(renderer, root, [0,0], [0,0.82], 0.24, coral.color);
     drawEllipse(renderer, root, 0,0.82,0.24,0.23,coral.color);
     for (const side of [-1,1]) {

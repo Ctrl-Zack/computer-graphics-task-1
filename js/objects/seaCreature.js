@@ -25,26 +25,41 @@ export function updateSeaCreature(creature, time) {
 }
 
 export function drawSeaCreature(renderer, creature, pose) {
-    const { meshes } = renderer;
-    // Root T * R * S meneruskan gerak ke badan, kedua sirip, dan mata.
-    // Hanya translation Y yang beranimasi; X dan orientasi tetap.
-    const root = transform(IDENTITY, pose.x, pose.y, creature.scale, creature.scale, pose.rotation);
-    drawEllipse(renderer, root,-0.43,-0.18,0.28,0.14,"#d5dbe2",-0.45);
-    drawEllipse(renderer, root,0.43,-0.18,0.28,0.14,"#d5dbe2",0.45);
-    drawPolygon(renderer, meshes.creatureBody,root,"#bbcbd5");
-    drawPolygon(renderer, meshes.creatureBody,transform(root,-0.025,0,0.89,0.95),"#e0d8df");
-    drawPolygon(renderer, meshes.creatureBody,transform(root,-0.05,-0.015,0.77,0.89),"#f2e2e4");
-    drawSurprisedFace(renderer, root);
+    // Blur effect: draw multiple faint radial copies
+    const passes = 6;
+    for (let i = 0; i < passes; i++) {
+        const angle = i * Math.PI * 2 / passes;
+        const radius = 0.02; // Blur radius
+        const blurPose = {
+            x: pose.x + Math.cos(angle) * radius,
+            y: pose.y + Math.sin(angle) * radius,
+            rotation: pose.rotation
+        };
+        drawCreaturePass(renderer, blurPose, creature.scale, 0.1);
+    }
+    // Main ghostly body
+    drawCreaturePass(renderer, pose, creature.scale, 0.6);
 }
 
-function drawSurprisedFace(renderer, creatureMatrix) {
+function drawCreaturePass(renderer, pose, scale, opacity) {
+    const { meshes } = renderer;
+    const root = transform(IDENTITY, pose.x, pose.y, scale, scale, pose.rotation);
+    drawEllipse(renderer, root,-0.43,-0.18,0.28,0.14,"#d5dbe2",-0.45, opacity);
+    drawEllipse(renderer, root,0.43,-0.18,0.28,0.14,"#d5dbe2",0.45, opacity);
+    drawPolygon(renderer, meshes.creatureBody,root,"#bbcbd5", opacity);
+    drawPolygon(renderer, meshes.creatureBody,transform(root,-0.025,0,0.89,0.95),"#e0d8df", opacity);
+    drawPolygon(renderer, meshes.creatureBody,transform(root,-0.05,-0.015,0.77,0.89),"#f2e2e4", opacity);
+    drawSurprisedFace(renderer, root, opacity);
+}
+
+function drawSurprisedFace(renderer, creatureMatrix, opacity) {
     const { meshes } = renderer;
     // Mata kecil langsung pada badan; posisi dan ukuran tetap dalam ruang lokal.
     const eyeColor = "#00060a";
-    drawEllipse(renderer, creatureMatrix,-0.14,0.165,0.070,0.110,eyeColor,-0.10,1);
-    drawEllipse(renderer, creatureMatrix,0.14,0.180,0.066,0.103,eyeColor,0.08,1);
+    drawEllipse(renderer, creatureMatrix,-0.14,0.165,0.070,0.110,eyeColor,-0.10,opacity);
+    drawEllipse(renderer, creatureMatrix,0.14,0.180,0.066,0.103,eyeColor,0.08,opacity);
 
     // Ring oval kecil: ekspresi "o" tanpa bidang gelap menyerupai lubang.
     const mouth = transform(creatureMatrix,0.005,-0.025,0.052,0.073,-0.06);
-    drawPolygon(renderer, meshes.ring,mouth,"#17232e",1);
+    drawPolygon(renderer, meshes.ring,mouth,"#17232e",opacity);
 }

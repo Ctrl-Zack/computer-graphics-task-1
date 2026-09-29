@@ -13,10 +13,20 @@ export function createShellData() {
     ];
 }
 
-export function drawShell(renderer, shell, color = "#e3c1c9") {
+export function drawShell(renderer, shell, time = 0, color = "#e3c1c9") {
     const { meshes } = renderer;
     const root = transform(IDENTITY,shell.x,shell.y,shell.scale,shell.scale,shell.rotation);
-    for (const angle of [0.52,-0.55]) {
+    
+    // Animate opening and closing using a sine wave. 
+    // Sine wave offset by shell's x coordinate so they don't all open synchronously.
+    const openAmount = (Math.sin(time * 2 + shell.x * 10) + 1); // Range 0 to 1
+    const baseAngle1 = 0;
+    const baseAngle2 = -0.55;
+    // When openAmount is 1, they open wider. When 0, they close tighter.
+    const animAngle1 = baseAngle1 + openAmount * 0.3;
+    const animAngle2 = baseAngle2 - openAmount * 0.3;
+
+    for (const angle of [animAngle1, animAngle2]) {
         const leaf = transform(root,0,0,1.10,1,angle);
         drawPolygon(renderer, meshes.leaf,leaf,color);
         drawPolygon(renderer, meshes.leaf,transform(leaf,0,0.03,0.73,0.86),"#895767");

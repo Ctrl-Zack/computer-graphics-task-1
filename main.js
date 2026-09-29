@@ -44,17 +44,17 @@ export function draw() {
     gl.clearColor(0.06, 0.11, 0.2, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
     // Painter's algorithm: urutan asli dipertahankan, tanpa depth buffer.
-    drawOcean(renderer, scene.light);
+    drawOcean(renderer, scene.light, state.time);
     drawBubbles(renderer, scene.bubbles, state.time, 'back', aspect);
     scene.plants.forEach(plant => drawSeaPlant(renderer, plant, state.time));
-    scene.corals.forEach(coral => drawSmallCoral(renderer, coral));
+    scene.corals.forEach(coral => drawSmallCoral(renderer, coral, state.time));
     scene.fish.forEach((fish, i) => drawFish(renderer, fish, fishPoses[i], state.showPivots));
     drawSeabed(renderer, scene.seabed);
     scene.creatures.forEach((creature, i) => {
         if (creature.layer === 'back') drawSeaCreature(renderer, creature, creaturePoses[i]);
     });
     drawRock(renderer, scene.seabed);
-    scene.shells.forEach(shell => drawShell(renderer, shell));
+    scene.shells.forEach(shell => drawShell(renderer, shell, state.time));
     drawStones(renderer);
     drawBubbles(renderer, scene.bubbles, state.time, 'front', aspect);
 }

@@ -11,6 +11,7 @@
         <p>Anggota 1: Isabella Sienna Sulisthio [5025241199]</p>
         <p>Anggota 2: Muhammad Zaky Zein [5025241148]</p>
     </div>
+
     <div class="container">
         <canvas id="canvas" width="1200" height="1260" tabindex="0"
             aria-label="Pemandangan bawah laut. Kontrol keyboard menggerakkan ikan besar."
@@ -19,6 +20,20 @@
         </canvas>
         <img src="reference.jpg" alt="reference" width="1200" height="1260">
     </div>
+
+    <div class="controls-info" id="control-guide">
+        <h3>Kontrol Interaktif</h3>
+        <ul>
+            <li><kbd>Panah</kbd>: Pindah posisi ikan besar</li>
+            <li><kbd>Q</kbd> / <kbd>E</kbd>: Rotasi ikan besar</li>
+            <li><kbd>Z</kbd> / <kbd>X</kbd>: Perkecil/Perbesar ikan besar</li>
+            <li><kbd>Spasi</kbd>: Pause / Play animasi</li>
+            <li><kbd>R</kbd>: Reset ikan besar (Shift+R: Reset semua)</li>
+            <li><kbd>[</kbd> / <kbd>]</kbd>: Kurangi / Tambah kecepatan animasi</li>
+            <li><kbd>P</kbd>: Tampilkan titik pivot (untuk debug)</li>
+        </ul>
+    </div>
+
     <script type="module" src="./main.js"></script>
 </body>
 </html>

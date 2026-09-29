@@ -36,6 +36,7 @@ img, canvas {
     justify-content: center;
     align-items: center;
     max-width: 100%;
+    margin: 20px 0;
 }
 
 .identity {
@@ -45,4 +46,36 @@ img, canvas {
     color: black;
     border-radius: 20px;
     background-color: white;
+}
+
+.controls-info {
+    background: #1c2a38;
+    padding: 15px 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    max-width: 600px;
+    width: 90vw;
+}
+
+.controls-info h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #f0bc5e;
+}
+
+.controls-info ul {
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+kbd {
+    background-color: #2b3d4f;
+    border: 1px solid #3c546b;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.9em;
+    font-family: monospace;
+    color: #e7ece8;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
 }
